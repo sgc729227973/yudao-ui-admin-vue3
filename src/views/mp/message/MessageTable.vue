@@ -59,6 +59,11 @@
           >
             <el-tag>选择地理位置</el-tag>
           </div>
+          <div
+            v-else-if="scope.row.type === MsgType.Event && scope.row.event === 'LOCATION'"
+          >
+            <el-tag>打开了公众号</el-tag>
+          </div>
           <div v-else-if="scope.row.type === MsgType.Event">
             <el-tag type="danger">未知事件类型</el-tag>
           </div>
@@ -142,4 +147,12 @@ const props = defineProps({
 })
 
 const emit = defineEmits<{ (e: 'send', v: number) }>()
+
+// irujia 解决显示“此图片来自微信公众平台未经允许不可引用”的错误
+onMounted(() => {
+  const metaTag = document.createElement('meta');
+  metaTag.name = 'referrer';
+  metaTag.content = 'never';
+  document.head.appendChild(metaTag);
+});
 </script>

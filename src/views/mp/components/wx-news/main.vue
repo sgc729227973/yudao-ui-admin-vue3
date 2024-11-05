@@ -53,6 +53,14 @@ const props = withDefaults(
 defineExpose({
   articles: props.articles
 })
+
+// irujia 解决显示“此图片来自微信公众平台未经允许不可引用”的错误
+onMounted(() => {
+  const metaTag = document.createElement('meta');
+  metaTag.name = 'referrer';
+  metaTag.content = 'never';
+  document.head.appendChild(metaTag);
+});
 </script>
 
 <style lang="scss" scoped>

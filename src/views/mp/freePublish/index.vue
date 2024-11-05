@@ -80,6 +80,13 @@ const getList = async () => {
   try {
     loading.value = true
     const data = await FreePublishApi.getFreePublishPage(queryParams)
+    data.list.forEach((item) => {
+      if (item.content && item.content.newsItem) {
+        item.content.newsItem.forEach((news) => {
+          news.picUrl = news.thumbUrl // irujia 允许显示公众号图片
+        })
+      }
+    })
     list.value = data.list
     total.value = data.total
   } finally {

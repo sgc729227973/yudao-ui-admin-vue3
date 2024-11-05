@@ -19,19 +19,20 @@
     </div>
 
     <!-- 弹窗播放 -->
-    <el-dialog v-model="dialogVideo" title="视频播放" append-to-body>
-      <video-player
-        v-if="dialogVideo"
-        class="video-player vjs-big-play-centered"
-        :src="props.url"
-        poster=""
-        crossorigin="anonymous"
-        controls
-        playsinline
-        :volume="0.6"
-        :width="800"
-        :playback-rates="[0.7, 1.0, 1.5, 2.0]"
-      />
+    <el-dialog v-model="dialogVideo" title="视频播放" append-to-body >
+      <div class="video-container">
+        <video-player
+          v-if="dialogVideo"
+          class="video-player vjs-big-play-centered"
+          :src="props.url"
+          poster=""
+          crossorigin="anonymous"
+          controls
+          playsinline
+          :volume="0.6"
+          :playback-rates="[0.7, 1.0, 1.5, 2.0]"
+        />
+      </div>
       <!--     事件，暫時沒用
       @mounted="handleMounted"-->
       <!--        @ready="handleEvent($event)"-->
@@ -58,7 +59,8 @@ const props = defineProps({
   url: {
     type: String,
     required: true
-  }
+  },
+
 })
 
 const dialogVideo = ref(false)
@@ -71,3 +73,18 @@ const playVideo = () => {
   dialogVideo.value = true
 }
 </script>
+
+<style lang="scss" scoped>
+.video-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.el-dialog__body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

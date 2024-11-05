@@ -20,13 +20,13 @@
     </el-table-column>
     <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
       <template #default="scope">
-        <el-button type="primary" link @click="emit('delete', scope.row.id)">
+        <el-button type="primary" link @click="handleDownload(scope.row.url)">
           <Icon icon="ep:download" />下载
         </el-button>
         <el-button
           type="primary"
           link
-          @click="emit('delete', scope.row.id)"
+          @click="handleDelete(scope.row.id)"
           v-hasPermi="['mp:material:delete']"
         >
           <Icon icon="ep:delete" />删除
@@ -48,4 +48,12 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'delete', v: number)
 }>()
+
+const handleDownload = (url: string) => {
+  window.open(url, '_blank')
+}
+
+const handleDelete = (id: number) => {
+  emit('delete', id)
+}
 </script>

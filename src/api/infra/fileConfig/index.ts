@@ -59,3 +59,8 @@ export const deleteFileConfig = (id: number) => {
 export const testFileConfig = (id: number) => {
   return request.get({ url: '/infra/file-config/test?id=' + id })
 }
+
+// irujia 查询文件配置（精简)列表
+export const getSimpleFileConfigList = () => {
+  return request.get({ url: '/infra/file-config/simple-list' }, true)
+}

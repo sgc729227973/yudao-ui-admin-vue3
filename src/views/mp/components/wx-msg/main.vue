@@ -1,10 +1,3 @@
-<!--
-  - Copyright (C) 2018-2019
-  - All rights reserved, Designed By www.joolun.com
-  芋道源码：
-  ① 移除暂时用不到的 websocket
-  ② 代码优化，补充注释，提升阅读性
--->
 <template>
   <ContentWrap>
     <div class="msg-div" ref="msgDivRef">
@@ -33,10 +26,11 @@
 <script lang="ts" setup>
 import WxReplySelect, { Reply, ReplyType } from '@/views/mp/components/wx-reply'
 import MsgList from './components/MsgList.vue'
-import { getMessagePage, sendMessage } from '@/api/mp/message'
+import { getMessagePage, sendMessage, getNewMessages } from '@/api/mp/message'
 import { getUser } from '@/api/mp/user'
 import profile from '@/assets/imgs/profile.jpg'
 import { User } from './types'
+import { onMounted, onBeforeUnmount, ref, reactive, nextTick } from 'vue'
 
 defineOptions({ name: 'WxMsg' })
 
@@ -78,6 +72,8 @@ const reply = ref<Reply>({
 const replySelectRef = ref<InstanceType<typeof WxReplySelect> | null>(null) // WxReplySelect组件ref，用于消息发送成功后清除内容
 const msgDivRef = ref<HTMLDivElement | null>(null) // 消息显示窗口ref，用于滚动到底部
 
+let pollingInterval: ReturnType<typeof setInterval> | null = null
+
 /** 完成加载 */
 onMounted(async () => {
   const data = await getUser(props.userId)
@@ -87,6 +83,14 @@ onMounted(async () => {
   reply.value.accountId = data.accountId
 
   refreshChange()
+
+  startPolling() // 确保这里调用的是 startPolling
+})
+
+onBeforeUnmount(() => {
+  if (pollingInterval) {
+    clearInterval(pollingInterval)
+  }
 })
 
 // 执行发送
@@ -104,10 +108,11 @@ const sendMsg = async () => {
     message.success('图文消息条数限制在 1 条以内，已默认发送第一条')
   }
 
-  const data = await sendMessage({ userId: props.userId, ...reply.value })
+  await sendMessage({ userId: props.userId, ...reply.value })
   sendLoading.value = false
 
-  list.value = [...list.value, ...[data]]
+  // 不再立即显示发送的消息，等待轮询获取新消息
+  // list.value = [...list.value, ...[data]]
   await scrollToBottom()
 
   // 发送后清空数据
@@ -160,6 +165,23 @@ const getPage = async (page: any, params: any = null) => {
 
 const refreshChange = () => {
   getPage(queryParams)
+}
+
+const startPolling = () => {
+  const fetchNewMessages = async () => {
+    const lastMessageId = list.value.length ? list.value[list.value.length - 1].id : 0
+    const newMessages = await getNewMessages({
+      accountId: accountId.value,
+      userId: props.userId,
+      lastMessageId: lastMessageId
+    })
+    if (newMessages && newMessages.length) {
+      list.value = [...list.value, ...newMessages]
+      await scrollToBottom()
+    }
+  }
+
+  pollingInterval = setInterval(fetchNewMessages, 5000) // 每5秒获取一次新消息irujia
 }
 
 /** 定位到消息底部 */

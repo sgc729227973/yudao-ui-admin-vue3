@@ -58,7 +58,7 @@ import { Reply } from './types'
 
 const message = useMessage()
 
-const UPLOAD_URL = import.meta.env.VITE_BASE_URL + '/admin-api/mp/material/upload-temporary'
+const UPLOAD_URL = import.meta.env.VITE_DJANGO_BASE_URL + '/admin-api/mp/material/upload-temporary'
 const HEADERS = { Authorization: 'Bearer ' + getAccessToken() }
 
 const props = defineProps<{
@@ -79,6 +79,11 @@ const uploadData = reactive({
   type: 'video',
   title: '',
   introduction: ''
+})
+
+// 监听 reply 变化并更新 uploadData 的 accountId irujia
+watch(() => reply.value.accountId, (newVal) => {
+  uploadData.accountId = newVal
 })
 
 const beforeVideoUpload = (rawFile: UploadRawFile) => useBeforeUpload(UploadType.Video, 10)(rawFile)

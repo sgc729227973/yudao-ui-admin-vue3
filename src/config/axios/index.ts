@@ -1,51 +1,55 @@
-import { service } from './service'
+import { serviceSpring, serviceDjango } from './service'
 
 import { config } from './config'
 
 const { default_headers } = config
 
-const request = (option: any) => {
+//irujia 如果 useDjango 为 true 则使用 django drf 为后端
+const request = (option: any, useDjango = false) => {
+  const service = useDjango ? serviceDjango : serviceSpring
   const { url, method, params, data, headersType, responseType, ...config } = option
   return service({
-    url: url,
+    url,
     method,
     params,
     data,
     ...config,
     responseType: responseType,
     headers: {
+      ...(config.headers || {}), // 保留已有的 headers
       'Content-Type': headersType || default_headers
     }
   })
 }
+
 export default {
-  get: async <T = any>(option: any) => {
-    const res = await request({ method: 'GET', ...option })
+  get: async <T = any>(option: any, useDjango = false) => {
+    const res = await request({ method: 'GET', ...option }, useDjango)
     return res.data as unknown as T
   },
-  post: async <T = any>(option: any) => {
-    const res = await request({ method: 'POST', ...option })
+  post: async <T = any>(option: any, useDjango = false) => {
+    const res = await request({ method: 'POST', ...option }, useDjango)
     return res.data as unknown as T
   },
-  postOriginal: async (option: any) => {
-    const res = await request({ method: 'POST', ...option })
+  delete: async <T = any>(option: any, useDjango = false) => {
+    const res = await request({ method: 'DELETE', ...option }, useDjango)
+    return res.data as unknown as T
+  },
+  put: async <T = any>(option: any, useDjango = false) => {
+    const res = await request({ method: 'PUT', ...option }, useDjango)
+    return res.data as unknown as T
+  },
+  postOriginal: async (option: any, useDjango = false) => {
+    const res = await request({ method: 'POST', ...option }, useDjango)
     return res
   },
-  delete: async <T = any>(option: any) => {
-    const res = await request({ method: 'DELETE', ...option })
-    return res.data as unknown as T
-  },
-  put: async <T = any>(option: any) => {
-    const res = await request({ method: 'PUT', ...option })
-    return res.data as unknown as T
-  },
-  download: async <T = any>(option: any) => {
-    const res = await request({ method: 'GET', responseType: 'blob', ...option })
+  download: async <T = any>(option: any, useDjango = false) => {
+    const res = await request({ method: 'GET', responseType: 'blob', ...option }, useDjango)
     return res as unknown as Promise<T>
   },
-  upload: async <T = any>(option: any) => {
+  upload: async <T = any>(option: any, useDjango = false) => {
     option.headersType = 'multipart/form-data'
-    const res = await request({ method: 'POST', ...option })
+    const res = await request({ method: 'POST', ...option }, useDjango)
     return res as unknown as Promise<T>
   }
 }

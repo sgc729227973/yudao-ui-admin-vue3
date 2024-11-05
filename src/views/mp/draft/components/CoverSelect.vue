@@ -38,7 +38,7 @@
             素材库选择
           </el-button>
           <template #tip>
-            <div class="el-upload__tip">支持 bmp/png/jpeg/jpg/gif 格式，大小不超过 2M</div>
+            <div class="el-upload__tip">支持 bmp/png/jpeg/jpg/gif 格式，大小不超过 2M。 图片必须为永久素材。</div>
           </template>
         </el-upload>
       </div>
@@ -49,11 +49,12 @@
         append-to-body
         destroy-on-close
       >
-        <WxMaterialSelect
-          type="image"
-          :account-id="accountId!"
-          @select-material="onMaterialSelected"
-        />
+      <WxMaterialSelect
+        type="image"
+        :account-id="accountId!"
+        :permanent="true"
+        @select-material="onMaterialSelected"
+      />
       </el-dialog>
     </div>
   </div>

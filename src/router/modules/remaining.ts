@@ -641,7 +641,100 @@ const remainingRouter: AppRouteRecordRaw[] = [
         component: () => import('@/views/iot/device/detail/index.vue')
       }
     ]
-  }
+  },
+  {
+    path: '/ow',
+    component: Layout,
+    name: 'assessment_questions',
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: 'assessment/questions/:assessmentId',
+        component: () => import('@/views/ow/assessment/question/index.vue'),
+        name: 'OwAssessmentQuestionsData',
+        meta: {
+          title: '详细数据',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          icon: '',
+          activeMenu: '/ow/assessment'
+        }
+      }
+    ]
+  },
+  {
+    path: '/ow',
+    component: Layout,
+    name: 'assessment_options',
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: 'assessment/options/:questionId',
+        component: () => import('@/views/ow/assessment/option/index.vue'),
+        name: 'OwAssessmentOptionsData',
+        meta: {
+          title: '详细数据',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          icon: '',
+          activeMenu: '/ow/assessment'
+        }
+      }
+    ]
+  },
+  {
+    path: '/ow',
+    component: Layout,
+    name: 'assessment_result',
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: 'assessment/result/:assessmentId',
+        component: () => import('@/views/ow/assessment/result/index.vue'),
+        name: 'OwAssessmentResultData',
+        meta: {
+          title: '评估结果',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          icon: '',
+          activeMenu: '/ow/assessment'
+        }
+      }
+    ]
+  },
+  {
+    path: '/ow',
+    component: Layout,
+    name: 'job_application',
+    meta: {
+      hidden: true
+    },
+    children: [
+      {
+        path: 'job/application/:jobPostId',
+        component: () => import('@/views/ow/job/application/index.vue'),
+        name: 'OwJobApplicationData',
+        meta: {
+          title: '申请记录',
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          icon: '',
+          activeMenu: '/ow/job'
+        }
+        
+      }
+    ]
+  },
 ]
 
 export default remainingRouter

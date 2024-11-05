@@ -5,7 +5,7 @@ export const getDraftPage = (query) => {
   return request.get({
     url: '/mp/draft/page',
     params: query
-  })
+  },true)
 }
 
 // 创建公众号草稿
@@ -15,7 +15,7 @@ export const createDraft = (accountId, articles) => {
     data: {
       articles
     }
-  })
+  },true)
 }
 
 // 更新公众号草稿
@@ -24,12 +24,12 @@ export const updateDraft = (accountId, mediaId, articles) => {
     url: '/mp/draft/update?accountId=' + accountId + '&mediaId=' + mediaId,
     method: 'put',
     data: articles
-  })
+  },true)
 }
 
 // 删除公众号草稿
 export const deleteDraft = (accountId, mediaId) => {
   return request.delete({
     url: '/mp/draft/delete?accountId=' + accountId + '&mediaId=' + mediaId
-  })
+  },true)
 }

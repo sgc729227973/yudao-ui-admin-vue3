@@ -114,8 +114,8 @@ export default {
     small: '小'
   },
   login: {
-    welcome: '欢迎使用本系统',
-    message: '开箱即用的中后台管理系统',
+    welcome: '爱入家健康管理后台系统',
+    message: '希望您开心快乐每一天,把美丽的笑容留给自己也留给顾客',
     tenantname: '租户名称',
     username: '用户名',
     password: '密码',

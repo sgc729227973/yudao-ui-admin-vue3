@@ -7,7 +7,7 @@
 <template>
   <div class="pb-30px">
     <!-- 类型：image -->
-    <div v-if="props.type === 'image'">
+    <div v-if="props.type === 'image' || props.type === 'thumb'">
       <div class="waterfall" v-loading="loading">
         <div class="waterfall-item" v-for="item in list" :key="item.mediaId">
           <img class="material-img" :src="item.url" />
@@ -48,8 +48,8 @@
         />
         <el-table-column label="操作" align="center" fixed="right">
           <template #default="scope">
-            <el-button type="primary" link @click="selectMaterialFun(scope.row)"
-              >选择
+            <el-button type="primary" link @click="selectMaterialFun(scope.row)">
+              选择
               <Icon icon="ep:plus" />
             </el-button>
           </template>
@@ -90,8 +90,8 @@
           class-name="small-padding fixed-width"
         >
           <template #default="scope">
-            <el-button type="primary" link @click="selectMaterialFun(scope.row)"
-              >选择
+            <el-button type="primary" link @click="selectMaterialFun(scope.row)">
+              选择
               <Icon icon="akar-icons:circle-plus" />
             </el-button>
           </template>
@@ -148,9 +148,11 @@ const props = withDefaults(
     type: string
     accountId: number
     newsType?: NewsType
+    permanent?: boolean // 新增的永久素材过滤参数 irujia
   }>(),
   {
-    newsType: NewsType.Published
+    newsType: NewsType.Published,
+    permanent: false // 默认值为 false
   }
 )
 
@@ -166,7 +168,8 @@ const list = ref<any[]>([])
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
-  accountId: props.accountId
+  accountId: props.accountId,
+  permanent: props.permanent
 })
 
 const selectMaterialFun = (item) => {

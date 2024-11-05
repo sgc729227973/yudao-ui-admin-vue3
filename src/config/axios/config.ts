@@ -1,4 +1,5 @@
 const config: {
+  django_base_url: any
   base_url: string
   result_code: number | string
   default_headers: AxiosHeaders
@@ -8,6 +9,12 @@ const config: {
    * api请求基础路径
    */
   base_url: import.meta.env.VITE_BASE_URL + import.meta.env.VITE_API_URL,
+
+  /**
+   * Django DRF 后端的 api请求基础路径
+   */
+  django_base_url: import.meta.env.VITE_DJANGO_BASE_URL + import.meta.env.VITE_API_URL, //irujia 添加 Django DRF 的基础路径
+
   /**
    * 接口成功返回状态码
    */

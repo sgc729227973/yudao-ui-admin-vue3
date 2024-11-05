@@ -106,11 +106,12 @@ const onAccountChanged = (id: number) => {
 }
 
 // 关闭弹窗
-const onBeforeDialogClose = async (onDone: () => {}) => {
-  try {
-    await message.confirm('修改内容可能还未保存，确定关闭吗?')
-    onDone()
-  } catch {}
+const onBeforeDialogClose = (done: () => void) => {
+  message.confirm('修改内容可能还未保存，确定关闭吗?')
+    .then(() => {
+      done()
+    })
+    .catch(() => {})
 }
 
 // ======================== 列表查询 ========================
@@ -192,6 +193,14 @@ const onDelete = async (item: Article) => {
     await getList()
   } catch {}
 }
+
+// irujia 解决显示“此图片来自微信公众平台未经允许不可引用”的错误
+onMounted(() => {
+  const metaTag = document.createElement('meta')
+  metaTag.name = 'referrer'
+  metaTag.content = 'never'
+  document.head.appendChild(metaTag)
+})
 </script>
 
 <style lang="scss" scoped>

@@ -63,7 +63,7 @@ import { getAccessToken } from '@/utils/auth'
 import { Reply } from './types'
 const message = useMessage()
 
-const UPLOAD_URL = import.meta.env.VITE_BASE_URL + '/admin-api/mp/material/upload-temporary'
+const UPLOAD_URL = import.meta.env.VITE_DJANGO_BASE_URL + '/admin-api/mp/material/upload-temporary'
 const HEADERS = { Authorization: 'Bearer ' + getAccessToken() } // 设置上传的请求头部
 
 const props = defineProps<{
@@ -117,6 +117,11 @@ const selectMaterial = (item) => {
   reply.value.url = item.url
   reply.value.name = item.name
 }
+
+// 监听 reply 变化并更新 uploadData 的 accountId
+watch(() => reply.value.accountId, (newVal) => {
+  uploadData.accountId = newVal
+})
 </script>
 
 <style lang="scss" scoped>

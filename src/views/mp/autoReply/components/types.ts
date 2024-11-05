@@ -3,5 +3,8 @@
 export enum MsgType {
   Follow = 1,
   Message = 2,
-  Keyword = 3
+  Keyword = 3,
+  SeesionKeyword =4,
+  FunctionList = 5
+
 }

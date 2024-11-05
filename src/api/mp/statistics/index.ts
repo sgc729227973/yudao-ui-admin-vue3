@@ -5,7 +5,7 @@ export const getUpstreamMessage = (query) => {
   return request.get({
     url: '/mp/statistics/upstream-message',
     params: query
-  })
+  },true)
 }
 
 // 用户增减数据
@@ -13,7 +13,7 @@ export const getUserSummary = (query) => {
   return request.get({
     url: '/mp/statistics/user-summary',
     params: query
-  })
+  },true)
 }
 
 // 获得用户累计数据
@@ -21,7 +21,7 @@ export const getUserCumulate = (query) => {
   return request.get({
     url: '/mp/statistics/user-cumulate',
     params: query
-  })
+  },true)
 }
 
 // 获得接口分析数据
@@ -29,5 +29,5 @@ export const getInterfaceSummary = (query) => {
   return request.get({
     url: '/mp/statistics/interface-summary',
     params: query
-  })
+  },true)
 }

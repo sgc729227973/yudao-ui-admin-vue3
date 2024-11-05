@@ -63,7 +63,7 @@
       </el-table-column>
       <el-table-column label="订阅状态" align="center" prop="subscribeStatus">
         <template #default="scope">
-          <el-tag v-if="scope.row.subscribeStatus === 0" type="success">已订阅</el-tag>
+          <el-tag v-if="scope.row.subscribeStatus === 1" type="success">已订阅</el-tag>
           <el-tag v-else type="danger">未订阅</el-tag>
         </template>
       </el-table-column>

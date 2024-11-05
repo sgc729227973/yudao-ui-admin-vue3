@@ -4,7 +4,7 @@ import request from '@/config/axios'
 export const getMenuList = (accountId) => {
   return request.get({
     url: '/mp/menu/list?accountId=' + accountId
-  })
+  },true)
 }
 
 // 保存公众号菜单
@@ -15,12 +15,12 @@ export const saveMenu = (accountId, menus) => {
       accountId,
       menus
     }
-  })
+  },true)
 }
 
 // 删除公众号菜单
 export const deleteMenu = (accountId) => {
   return request.delete({
     url: '/mp/menu/delete?accountId=' + accountId
-  })
+  },true)
 }

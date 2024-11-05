@@ -44,7 +44,7 @@
           :type="UploadType.Voice"
           @uploaded="getList"
         >
-          格式支持 mp3/wma/wav/amr，文件大小不超过 2M，播放长度不超过 60s
+        格式支持 mp3/wma/wav/amr，文件大小不超过 2M，播放长度不超过 60s。  临时素材格式仅支持 mp3/amr。
         </UploadFile>
         <!-- 列表 -->
         <VoiceTable :list="list" :loading="loading" @delete="handleDelete" />

@@ -33,11 +33,17 @@
 <script lang="ts" setup>
 import * as MpTagApi from '@/api/mp/tag'
 import * as MpUserApi from '@/api/mp/user'
+import { ElMessage } from 'element-plus'
 
 defineOptions({ name: 'MpUserForm' })
 
 const { t } = useI18n() // 国际化
-const message = useMessage() // 消息弹窗
+// const message = useMessage() // 消息弹窗
+
+interface Tag {
+  tagId: number;
+  name: string;
+}
 
 const dialogVisible = ref(false) // 弹窗的是否展示
 const formLoading = ref(false) // 表单的加载中
@@ -45,11 +51,11 @@ const formData = ref({
   id: undefined,
   nickname: undefined,
   remark: undefined,
-  tagIds: []
+  tagIds: [] as number[]
 })
 const formRules = reactive({}) // 表单的校验
 const formRef = ref() // 表单 Ref
-const tagList = ref([]) // 公众号标签列表
+const tagList = ref<Tag[]>([]) // 公众号标签列表
 
 /** 打开弹窗 */
 const open = async (id: number) => {
@@ -59,7 +65,8 @@ const open = async (id: number) => {
   if (id) {
     formLoading.value = true
     try {
-      formData.value = await MpUserApi.getUser(id)
+      const userData = await MpUserApi.getUser(id)
+      formData.value = { ...userData }
     } finally {
       formLoading.value = false
     }
@@ -80,7 +87,7 @@ const submitForm = async () => {
   formLoading.value = true
   try {
     await MpUserApi.updateUser(formData.value)
-    message.success(t('common.updateSuccess'))
+    ElMessage.success(t('common.updateSuccess'))
     dialogVisible.value = false
     // 发送操作成功的事件
     emit('success')

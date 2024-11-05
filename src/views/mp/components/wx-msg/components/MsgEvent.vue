@@ -34,6 +34,9 @@
     <div v-else-if="item.event === 'location_select'">
       <el-tag>选择地理位置</el-tag>
     </div>
+    <div v-else-if="item.event === 'LOCATION'">
+      <el-tag>打开了公众号</el-tag>
+    </div>
     <div v-else>
       <el-tag type="danger">未知事件类型</el-tag>
     </div>

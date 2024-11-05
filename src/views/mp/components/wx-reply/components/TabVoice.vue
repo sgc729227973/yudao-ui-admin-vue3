@@ -44,7 +44,7 @@
           <el-button type="primary">点击上传</el-button>
           <template #tip>
             <div class="el-upload__tip">
-              格式支持 mp3/wma/wav/amr，文件大小不超过 2M，播放长度不超过 60s
+              格式支持 mp3/wma/wav/amr，文件大小不超过 2M，播放长度不超过 60s。临时素材格式仅支持 mp3/amr。
             </div>
           </template>
         </el-upload>
@@ -52,7 +52,9 @@
     </el-row>
   </div>
 </template>
+
 <script lang="ts" setup>
+import { watch, ref, reactive, computed } from 'vue'
 import WxMaterialSelect from '@/views/mp/components/wx-material-select'
 import WxVoicePlayer from '@/views/mp/components/wx-voice-play'
 import { UploadType, useBeforeUpload } from '@/views/mp/hooks/useUpload'
@@ -61,7 +63,7 @@ import { getAccessToken } from '@/utils/auth'
 import { Reply } from './types'
 const message = useMessage()
 
-const UPLOAD_URL = import.meta.env.VITE_BASE_URL + '/admin-api/mp/material/upload-temporary'
+const UPLOAD_URL = import.meta.env.VITE_DJANGO_BASE_URL + '/admin-api/mp/material/upload-temporary'
 const HEADERS = { Authorization: 'Bearer ' + getAccessToken() } // 设置上传的请求头部
 
 const props = defineProps<{
@@ -84,7 +86,46 @@ const uploadData = reactive({
   introduction: ''
 })
 
-const beforeVoiceUpload = (rawFile: UploadRawFile) => useBeforeUpload(UploadType.Voice, 10)(rawFile)
+// 监听 reply 变化并更新 uploadData 的 accountId
+watch(() => reply.value.accountId, (newVal) => {
+  uploadData.accountId = newVal
+})
+
+const convertFileToUploadRawFile = (file: File): UploadRawFile => {
+  const uid = Date.now();
+  const rawFile = {
+    ...file,
+    uid,
+    lastModified: file.lastModified,
+    name: file.name,
+    size: file.size,
+    type: file.type,
+    webkitRelativePath: file.webkitRelativePath
+  }
+  return rawFile as UploadRawFile;
+}
+
+const beforeVoiceUpload = (rawFile: UploadRawFile) => {
+  console.log('文件类型:', rawFile.type || '未检测到类型');
+  console.log('文件名称:', rawFile.name);
+
+  const isAmr = rawFile.type === 'audio/amr' || rawFile.name.endsWith('.amr');
+  const isMp3 = rawFile.type === 'audio/mpeg' || rawFile.name.endsWith('.mp3');
+  if (!isAmr && !isMp3) {
+    message.error('仅支持mp3/amr格式的音频文件');
+    return false;
+  }
+
+  if (!rawFile.type) {
+    if (rawFile.name.endsWith('.amr')) {
+      rawFile = convertFileToUploadRawFile(new File([rawFile], rawFile.name, { type: 'audio/amr' }));
+    } else if (rawFile.name.endsWith('.mp3')) {
+      rawFile = convertFileToUploadRawFile(new File([rawFile], rawFile.name, { type: 'audio/mpeg' }));
+    }
+  }
+
+  return useBeforeUpload(UploadType.Voice, 10)(rawFile);
+}
 
 const onUploadSuccess = (res: any) => {
   if (res.code !== 0) {
@@ -110,7 +151,6 @@ const onDelete = () => {
 const selectMaterial = (item: Reply) => {
   showDialog.value = false
 
-  // reply.value.type = ReplyType.Voice
   reply.value.mediaId = item.mediaId
   reply.value.url = item.url
   reply.value.name = item.name

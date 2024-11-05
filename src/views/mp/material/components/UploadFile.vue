@@ -41,7 +41,7 @@ const emit = defineEmits<{
 }>()
 
 const uploadData: UploadData = reactive({
-  type: UploadType.Image,
+  type: props.type, // 动态设置初始类型 irujia
   title: '',
   introduction: '',
   accountId: accountId!
@@ -68,6 +68,12 @@ const onUploadSuccess: UploadProps['onSuccess'] = (res: any) => {
 
 /** 上传失败处理 */
 const onUploadError = (err: Error) => message.error('上传失败: ' + err.message)
+
+/** 监听 props.type 变化并更新 uploadData.type */
+watch(() => props.type, (newType) => {
+  uploadData.type = newType
+}) //irujia
+
 </script>
 
 <style lang="scss" scoped>

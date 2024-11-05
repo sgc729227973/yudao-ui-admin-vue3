@@ -1,5 +1,5 @@
 import { IEditorConfig } from '@wangeditor/editor'
-import { getAccessToken, getTenantId } from '@/utils/auth'
+import { getAccessToken } from '@/utils/auth'
 
 const message = useMessage()
 
@@ -32,7 +32,6 @@ export const createEditorConfig = (
         headers: {
           Accept: '*',
           Authorization: 'Bearer ' + getAccessToken(),
-          'tenant-id': getTenantId()
         },
 
         // 跨域是否传递 cookie ，默认为 false

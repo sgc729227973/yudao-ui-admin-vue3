@@ -32,14 +32,14 @@
           </el-col>
         </el-row>
         <el-dialog
-          title="选择图片"
+          title="选择缩略图，格式为JGP"
           v-model="showDialog"
           width="80%"
           append-to-body
           destroy-on-close
         >
           <WxMaterialSelect
-            type="image"
+            type="thumb"
             :account-id="reply.accountId"
             @select-material="selectMaterial"
           />
@@ -67,7 +67,7 @@ import { Reply } from './types'
 
 const message = useMessage()
 
-const UPLOAD_URL = import.meta.env.VITE_BASE_URL + '/admin-api/mp/material/upload-temporary'
+const UPLOAD_URL = import.meta.env.VITE_DJANGO_BASE_URL + '/admin-api/mp/material/upload-temporary'
 const HEADERS = { Authorization: 'Bearer ' + getAccessToken() } // 设置上传的请求头部
 
 const props = defineProps<{
@@ -113,4 +113,9 @@ const selectMaterial = (item: any) => {
   reply.value.thumbMediaId = item.mediaId
   reply.value.thumbMediaUrl = item.url
 }
+/** 侦听公众号变化 **/
+watch(() => reply.value.accountId, (newId) => {
+  uploadData.accountId = newId
+})
+
 </script>

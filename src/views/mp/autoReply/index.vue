@@ -21,7 +21,6 @@
             plain
             @click="onCreate"
             v-hasPermi="['mp:auto-reply:create']"
-            v-if="msgType !== MsgType.Follow || list.length <= 0"
           >
             <Icon icon="ep:plus" />新增
           </el-button>
@@ -41,6 +40,16 @@
       <el-tab-pane :name="MsgType.Keyword">
         <template #label>
           <el-row align="middle"><Icon icon="fa:newspaper-o" class="mr-2px" /> 关键词回复</el-row>
+        </template>
+      </el-tab-pane>
+      <el-tab-pane :name="MsgType.SeesionKeyword">
+        <template #label>
+          <el-row align="middle"><Icon icon="fa:newspaper-o" class="mr-2px" /> 会话关键词</el-row>
+        </template>
+      </el-tab-pane>
+      <el-tab-pane :name="MsgType.FunctionList">
+        <template #label>
+          <el-row align="middle"><Icon icon="fa:newspaper-o" class="mr-2px" /> 功能列表</el-row>
         </template>
       </el-tab-pane>
     </el-tabs>

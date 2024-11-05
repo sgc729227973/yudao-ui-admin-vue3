@@ -101,9 +101,9 @@ const uploadVideoRef = ref<UploadInstance | null>(null)
 const submitVideo = () => {
   uploadFormRef.value?.validate((valid) => {
     if (!valid) {
-      return false
+      return // 无需返回 false，只需要在无效时停止进一步操作即可
     }
-    uploadVideoRef.value?.submit()
+    uploadVideoRef.value?.submit() // 表单有效时，提交文件
   })
 }
 

@@ -16,7 +16,7 @@ interface RuleConfig {
   // 例：需要校验价格必须大于0.01
   // {
   //  name:'price',
-  //  rule:(arg: number) => arg > 0.01
+  //  rule:(arg: number) => arg > 0.00
   // }
   rule: (arg: any) => boolean
   // 校验不通过时的消息提示

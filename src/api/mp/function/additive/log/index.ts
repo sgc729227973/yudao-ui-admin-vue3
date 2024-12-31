@@ -23,5 +23,5 @@ export const getFunctionLogList = async (params: PageParam) => {
 
 // 导出功能日志
 export const exportFunctionLog = (params: any) => {
-  return request.download({ url: '/mp/function/additive/log/export', params })
+  return request.download({ url: '/mp/function/additive/log/export', params }, true)
 }

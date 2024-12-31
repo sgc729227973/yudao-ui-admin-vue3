@@ -2,17 +2,19 @@ import request from '@/config/axios'
 
 // 定义接口，和序列化器中的字段保持一致
 export interface JobPostVO {
-  id?: number
-  title: string
-  location: string
-  experienceLevel: string 
-  description: string
-  status: number
-  postId: number
-  sortOrder?: number 
-  createTime?: Date
+  id?: number;
+  title: string;
+  location: string;
+  experienceLevel: string;
+  description: string;
+  status: number;
+  postId?: number;
+  sortOrder?: number;
+  createTime?: Date;
+  contents?: {
+    question: string[]; // 问题内容直接为字符串数组
+  };
 }
-
 // 查询岗位列表
 export const getJobPostList = async (params: PageParam) => {
   return await request.get({ url: '/ow/job/post/page', params }, true)

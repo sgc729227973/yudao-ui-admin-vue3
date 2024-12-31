@@ -92,7 +92,30 @@
                 @click="setLoginState(LoginStateEnum.MOBILE)"
               />
             </el-col>
+            <el-col :span="8">
+              <XButton
+                :title="t('login.btnQRCode')"
+                class="w-[100%]"
+                @click="setLoginState(LoginStateEnum.QR_CODE)"
+              />
+            </el-col>
           </el-row>
+        </el-form-item>
+      </el-col>
+      <el-divider content-position="center">{{ t('login.otherLogin') }}</el-divider>
+      <el-col :span="24" style="padding-right: 10px; padding-left: 10px">
+        <el-form-item>
+          <div class="w-[100%] flex justify-between">
+            <Icon
+              v-for="(item, key) in socialList"
+              :key="key"
+              :icon="item.icon"
+              :size="30"
+              class="anticon cursor-pointer"
+              color="#999"
+              @click="doSocialLogin(item.type)"
+            />
+          </div>
         </el-form-item>
       </el-col>
     </el-row>
@@ -113,6 +136,7 @@ import { LoginStateEnum, useFormValid, useLoginState } from './useLogin'
 defineOptions({ name: 'LoginForm' })
 
 const { t } = useI18n()
+const message = useMessage()
 const iconHouse = useIcon({ icon: 'ep:house' })
 const iconAvatar = useIcon({ icon: 'ep:avatar' })
 const iconLock = useIcon({ icon: 'ep:lock' })
@@ -157,6 +181,13 @@ const getCode = async () => {
     verify.value.show()
   }
 }
+
+const socialList = [
+  { icon: 'ant-design:wechat-filled', type: 30 },
+  { icon: 'ant-design:dingtalk-circle-filled', type: 20 },
+]
+
+
 // 获取租户 ID
 const getTenantId = async () => {
   if (loginData.tenantEnable === 'true') {
@@ -241,6 +272,44 @@ onMounted(() => {
   getLoginFormCache()
   getTenantByWebsite()
 })
+
+// 社交登录
+const doSocialLogin = async (type: number) => {
+  if (type === 0) {
+    message.error('此方式未配置')
+  } else {
+    loginLoading.value = true
+    if (loginData.tenantEnable === 'true') {
+      // 尝试先通过 tenantName 获取租户
+      await getTenantId()
+      // 如果获取不到，则需要弹出提示，进行处理
+      if (!authUtil.getTenantId()) {
+        try {
+          const data = await message.prompt('请输入租户名称', t('common.reminder'))
+          if (data?.action !== 'confirm') throw 'cancel'
+          const res = await LoginApi.getTenantIdByName(data.value)
+          authUtil.setTenantId(res)
+        } catch (error) {
+          if (error === 'cancel') return
+        } finally {
+          loginLoading.value = false
+        }
+      }
+    }
+    // 计算 redirectUri
+    // tricky: type、redirect需要先encode一次，否则钉钉回调会丢失。
+    // 配合 Login/SocialLogin.vue#getUrlValue() 使用
+    const redirectUri =
+      location.origin +
+      '/social-login?' +
+      encodeURIComponent(`type=${type}&redirect=${redirect.value || '/'}`)
+
+    // 进行跳转
+    const res = await LoginApi.socialAuthRedirect(type, encodeURIComponent(redirectUri))
+    window.location.href = res
+  }
+}
+
 </script>
 
 <style lang="scss" scoped>

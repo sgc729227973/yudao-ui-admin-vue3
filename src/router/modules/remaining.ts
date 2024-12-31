@@ -645,75 +645,6 @@ const remainingRouter: AppRouteRecordRaw[] = [
   {
     path: '/ow',
     component: Layout,
-    name: 'assessment_questions',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'assessment/questions/:assessmentId',
-        component: () => import('@/views/ow/assessment/question/index.vue'),
-        name: 'OwAssessmentQuestionsData',
-        meta: {
-          title: '详细数据',
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          icon: '',
-          activeMenu: '/ow/assessment'
-        }
-      }
-    ]
-  },
-  {
-    path: '/ow',
-    component: Layout,
-    name: 'assessment_options',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'assessment/options/:questionId',
-        component: () => import('@/views/ow/assessment/option/index.vue'),
-        name: 'OwAssessmentOptionsData',
-        meta: {
-          title: '详细数据',
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          icon: '',
-          activeMenu: '/ow/assessment'
-        }
-      }
-    ]
-  },
-  {
-    path: '/ow',
-    component: Layout,
-    name: 'assessment_result',
-    meta: {
-      hidden: true
-    },
-    children: [
-      {
-        path: 'assessment/result/:assessmentId',
-        component: () => import('@/views/ow/assessment/result/index.vue'),
-        name: 'OwAssessmentResultData',
-        meta: {
-          title: '评估结果',
-          noCache: true,
-          hidden: true,
-          canTo: true,
-          icon: '',
-          activeMenu: '/ow/assessment'
-        }
-      }
-    ]
-  },
-  {
-    path: '/ow',
-    component: Layout,
     name: 'job_application',
     meta: {
       hidden: true
@@ -731,10 +662,9 @@ const remainingRouter: AppRouteRecordRaw[] = [
           icon: '',
           activeMenu: '/ow/job'
         }
-        
       }
     ]
-  },
+  }
 ]
 
 export default remainingRouter

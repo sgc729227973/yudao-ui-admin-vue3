@@ -16,6 +16,14 @@
           class="!w-240px"
         />
       </el-form-item>
+      <el-form-item label="评估识别码" prop="identifier" label-width="90">
+        <el-input
+          v-model="queryParams.identifier"
+          placeholder="请输入用户评估识别码"
+          clearable
+          class="!w-240px"
+        />
+      </el-form-item>
       <!-- 评估选择器 -->
       <el-form-item label="评估名称" prop="assessment">
         <el-select v-model="queryParams.assessmentId" placeholder="请选择评估" clearable class="!w-240px">
@@ -38,10 +46,18 @@
         />
       </el-form-item>
       <el-form-item>
-        <el-button @click="handleQuery"
-        v-hasPermi="['ow:assessment:log:query']"	
-        ><Icon icon="ep:search" class="mr-5px" /> 搜索</el-button>
-        <el-button @click="resetQuery"><Icon icon="ep:refresh" class="mr-5px" /> 重置</el-button>
+        <el-button 
+        @click="handleQuery"
+          v-hasPermi="['ow:assessment:log:query']"
+        >
+          <Icon icon="ep:search" class="mr-5px" /> 搜索
+        </el-button>
+        <el-button 
+        @click="resetQuery"
+        >
+        <Icon icon="ep:refresh" class="mr-5px" /> 
+        重置
+      </el-button>
         <el-button
           type="success"
           plain
@@ -61,10 +77,22 @@
     <el-table v-loading="loading" :data="list">
       <el-table-column label="日志编号" align="center" prop="id" />
       <el-table-column label="用户编号" align="center" prop="userId" />
-      <el-table-column label="评估标题" align="center" prop="assessmentTitle" />
-      <el-table-column label="评估编号" align="center" prop="assessment" />
+      <!-- 动态匹配评估名称 -->
+      <el-table-column label="评估名称" align="center">
+        <template #default="{ row }">
+          {{ getAssessmentName(row.assessmentId) }}
+        </template>
+      </el-table-column>
       <el-table-column label="得分" align="center" prop="score"  />
+      <el-table-column label="识别码" align="center" prop="identifier"  />
       <el-table-column label="持续时间" align="center" prop="duration"  />
+      <el-table-column
+        :formatter="dateFormatter"
+        align="center"
+        label="创建时间"
+        prop="createTime"
+        width="180"
+      />
       <el-table-column label="操作" align="center" fixed="right" >
         <template #default="scope">
           <el-button
@@ -92,6 +120,7 @@
 
 <script lang="ts" setup>
 import download from '@/utils/download'
+import { dateFormatter } from '@/utils/formatTime'
 import * as AssessmentApi from '@/api/ow/assessment/topic/index'
 import { getAssessmentLogList, exportAssessmentLog, OfficialWebAssessmentLogVO } from '@/api/ow/assessment/log'
 import AssessmentLogDetail from './LogDetail.vue'
@@ -106,11 +135,18 @@ const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
   userId: undefined,
+  identifier: '',
   assessmentId: undefined,
   createTime: [],
 })
 const queryFormRef = ref()
 const exportLoading = ref(false)
+
+/** 获取评估名称 */
+const getAssessmentName = (assessmentId: number) => {
+  const assessment = assessmentList.value.find((item) => item.id === assessmentId)
+  return assessment ? assessment.title : '未知评估'
+}
 
 /** 查询列表 */
 const getList = async () => {

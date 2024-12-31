@@ -1,100 +1,111 @@
 <template>
-  <Dialog v-model="dialogVisible" :max-height="500" :scroll="true" title="详情" width="800">
+  <Dialog v-model="dialogVisible"  :scroll="true" title="详情" width="900">
+    <el-descriptions :column="3" border>
+  <el-descriptions-item label="日志编号" label-class="description-label">
+    {{ detailData.id }}
+  </el-descriptions-item>
+  <el-descriptions-item label="用户编号" label-class="description-label">
+    {{ detailData.userId }}
+  </el-descriptions-item>
+  <el-descriptions-item label="评估编号" label-class="description-label">
+    {{ detailData.assessmentId }}
+  </el-descriptions-item>
+  <el-descriptions-item label="得分" label-class="description-label">
+    {{ detailData.score }}
+  </el-descriptions-item>
+  <el-descriptions-item label="持续时间" label-class="description-label">
+    {{ detailData.duration }}
+  </el-descriptions-item>
+  <el-descriptions-item label="IP地址" label-class="description-label">
+    {{ detailData.ipAddress }}
+  </el-descriptions-item>
+  <el-descriptions-item label="评估时间" label-class="description-label">
+    {{ formatDate(detailData.createTime) }}
+  </el-descriptions-item>
+  <el-descriptions-item label="设备信息" label-class="description-label">
+    {{ detailData.deviceInfo || '无' }}
+  </el-descriptions-item>
+
+</el-descriptions>
+
+
+    <el-divider>评估内容</el-divider>
+
     <el-descriptions :column="1" border>
-      <el-descriptions-item label="日志编号" label-class="description-label" width="1">
-        {{ detailData.id }}
+      <el-descriptions-item label="总分">
+        {{ detailData.contents.totalScore }}
       </el-descriptions-item>
-      <el-descriptions-item label="用户编号" label-class="description-label">
-        {{ detailData.userId }}
+      <el-descriptions-item label="风险等级">
+        {{ detailData.contents.riskLevel }}
       </el-descriptions-item>
-      <el-descriptions-item label="评估编号" label-class="description-label">
-        {{ detailData.assessmentId }}
+      <el-descriptions-item label="建议">
+        {{ detailData.contents.suggestion }}
       </el-descriptions-item>
-      <el-descriptions-item label="评估标题" label-class="description-label">
-        {{ detailData.assessmentTitle }}
+      <el-descriptions-item label="解释">
+        {{ detailData.contents.explanation }}
       </el-descriptions-item>
-      <el-descriptions-item label="得分" label-class="description-label">
-        {{ detailData.score }}
+      <el-descriptions-item label="服务流程">
+        <template v-for="step in detailData.contents.servicesProcess.steps" :key="step.step">
+          <p><strong>{{ step.step }}:</strong> {{ step.title }} - {{ step.description }}</p>
+        </template>
       </el-descriptions-item>
-      <el-descriptions-item label="开始时间" label-class="description-label">
-        {{ formatDate(detailData.startTime) }}
-      </el-descriptions-item>
-      <el-descriptions-item label="结束时间" label-class="description-label">
-        {{ formatDate(detailData.endTime) }}
-      </el-descriptions-item>
-      <el-descriptions-item label="持续时间" label-class="description-label">
-        {{ detailData.duration }}
-      </el-descriptions-item>
-      <el-descriptions-item label="IP地址" label-class="description-label">
-        {{ detailData.ipAddress }}
-      </el-descriptions-item>
-      <el-descriptions-item label="设备信息" label-class="description-label">
-        {{ detailData.deviceInfo }}
-      </el-descriptions-item>
-      <el-descriptions-item label="用户反馈" label-class="description-label">
-        {{ detailData.feedback || '无' }}
+      <el-descriptions-item label="回答">
+        <template v-for="answer in detailData.contents.answers" :key="answer.question">
+          <p><strong>{{ answer.question }}:</strong> {{ answer.answer }} (得分: {{ answer.score }})</p>
+        </template>
       </el-descriptions-item>
     </el-descriptions>
   </Dialog>
 </template>
 
 <script lang="ts" setup>
-import { OfficialWebAssessmentLogVO } from '@/api/ow/assessment/log'
+import { OfficialWebAssessmentLogVO } from '@/api/ow/assessment/log';
+import { ElDescriptions } from 'element-plus';
+import { formatDate } from '@/utils/formatTime'
 
-const dialogVisible = ref(false)
-const detailData = ref({} as OfficialWebAssessmentLogVO)
-
-const formatDate = (timestamp?: number | Date) => {
-  if (!timestamp) return '无'; // 如果时间戳或日期不存在，返回默认值
-  const date = new Date(timestamp);
-  return date.toLocaleString(); // 转换为可读的本地时间格式
-};
+const dialogVisible = ref(false);
+const detailData = ref({} as OfficialWebAssessmentLogVO);
 
 /** 打开弹窗 */
 const open = (data: OfficialWebAssessmentLogVO) => {
   dialogVisible.value = true;
-
-  // 确保 startTime 和 endTime 是有效的时间戳或 Date 对象
-  if (data.startTime) {
-    data.startTime = new Date(data.startTime);
-  }
-  if (data.endTime) {
-    data.endTime = new Date(data.endTime);
-  }
-  
   detailData.value = data;
 };
 
-defineExpose({ open })
+defineExpose({ open });
 </script>
 
 <style scoped>
 .description-label {
   font-weight: bold;
-  text-align: right; /* Align the label text to the right */
-  padding-right: 10px; /* Add space between label and content */
+  text-align: right;
+  padding-right: 10px;
 }
 
 .el-descriptions-item__content {
-  text-align: left; /* Align the content to the left */
+  font-size: 13px; /* 字体略小 */
+  line-height: 1.5; /* 更紧凑的行高 */
+  padding: 5px;
+}
+
+.el-descriptions {
+  margin-top: 10px; /* 增加与上方的间距 */
+}
+
+.el-descriptions-item__content {
+  text-align: left;
   font-size: 14px;
-  padding: 5px 10px; /* Add padding around the content for spacing */
+  padding: 5px 10px;
 }
 
 .el-descriptions-item__label {
-  padding: 5px 10px; /* Add padding around the labels */
+  padding: 5px 10px;
   font-size: 14px;
 }
 
 .el-descriptions {
-  border: 1px solid #e6e6e6; /* Add a subtle border to separate items */
+  border: 1px solid #e6e6e6;
   padding: 20px;
   background-color: #f9f9f9;
-}
-
-.dialog-container {
-  padding: 20px;
-  background-color: white;
-  border-radius: 8px; /* Add rounded corners */
 }
 </style>

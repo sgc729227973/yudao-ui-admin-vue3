@@ -101,7 +101,6 @@
             <el-input
               disabled
               v-model="formData.totalProductPrice"
-              :formatter="erpPriceTableColumnFormatter"
             />
           </el-form-item>
         </el-col>
@@ -123,7 +122,6 @@
               disabled
               v-model="formData.totalPrice"
               placeholder="请输入商机金额"
-              :formatter="erpPriceTableColumnFormatter"
             />
           </el-form-item>
         </el-col>
@@ -135,6 +133,7 @@
     </template>
   </Dialog>
 </template>
+
 <script setup lang="ts">
 import * as BusinessApi from '@/api/crm/business'
 import * as BusinessStatusApi from '@/api/crm/business/status'
@@ -142,7 +141,7 @@ import * as CustomerApi from '@/api/crm/customer'
 import * as UserApi from '@/api/system/user'
 import { useUserStore } from '@/store/modules/user'
 import BusinessProductForm from './components/BusinessProductForm.vue'
-import { erpPriceMultiply, erpPriceTableColumnFormatter } from '@/utils'
+import { erpPriceMultiply } from '@/utils'
 
 const { t } = useI18n() // 国际化
 const message = useMessage() // 消息弹窗
@@ -159,8 +158,8 @@ const formData = ref({
   statusTypeId: undefined,
   dealTime: undefined,
   discountPercent: 0,
-  totalProductPrice: undefined,
-  totalPrice: undefined,
+  totalProductPrice: 0,
+  totalPrice: 0,
   remark: undefined,
   products: [],
   contactId: undefined,
@@ -181,25 +180,31 @@ const customerList = ref([]) // 客户列表的数据
 const subTabsName = ref('product')
 const productFormRef = ref()
 
-/** 计算 discountPrice、totalPrice 价格 */
+/** 计算产品总金额和折扣后金额 */
 watch(
-  () => formData.value,
-  (val) => {
-    if (!val) {
-      return
-    }
-    const totalProductPrice = val.products.reduce((prev, curr) => prev + curr.totalPrice, 0)
-    const discountPrice =
-      val.discountPercent != null
-        ? erpPriceMultiply(totalProductPrice, val.discountPercent / 100.0)
-        : 0
-    const totalPrice = totalProductPrice - discountPrice
-    // 赋值
-    formData.value.totalProductPrice = totalProductPrice
-    formData.value.totalPrice = totalPrice
+  () => formData.value.products, // 监听产品列表的变化
+  (products) => {
+    // 计算产品总金额
+    const totalProductPrice = products.reduce((sum, product) => sum + (product.totalPrice || 0), 0);
+    formData.value.totalProductPrice = totalProductPrice;
+
+    // 根据折扣百分比计算折扣后金额
+    const discountPrice = formData.value.discountPercent
+      ? erpPriceMultiply(totalProductPrice, formData.value.discountPercent / 100)
+      : 0;
+    formData.value.totalPrice = totalProductPrice - discountPrice;
   },
   { deep: true }
-)
+);
+
+watch(
+  () => formData.value.discountPercent, // 监听折扣变化
+  (discountPercent) => {
+    // 重新计算折扣后金额
+    const discountPrice = formData.value.totalProductPrice * (discountPercent / 100);
+    formData.value.totalPrice = formData.value.totalProductPrice - discountPrice;
+  }
+);
 
 /** 打开弹窗 */
 const open = async (type: string, id?: number, customerId?: number, contactId?: number) => {
@@ -275,8 +280,8 @@ const resetForm = () => {
     statusTypeId: undefined,
     dealTime: undefined,
     discountPercent: 0,
-    totalProductPrice: undefined,
-    totalPrice: undefined,
+    totalProductPrice: 0,
+    totalPrice: 0,
     remark: undefined,
     products: [],
     contactId: undefined,

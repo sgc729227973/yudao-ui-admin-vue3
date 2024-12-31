@@ -7,27 +7,38 @@
       <el-descriptions-item label="用户昵称" min-width="120">
         {{ detailData.nickname }}
       </el-descriptions-item>
-      <el-descriptions label="用户头像" min-width="120">
+      <el-descriptions-item label="用户头像" min-width="120">
         <el-image :src="detailData.avatar" class="h-30px w-30px" />
-      </el-descriptions>
+      </el-descriptions-item>
       <el-descriptions-item label="社交 token" min-width="120">
-        {{ detailData.token }}
+        <el-scrollbar style="max-height: 100px">
+          <el-input
+            v-model="detailData.token"
+            type="textarea"
+            :autosize="{ minRows: 2 }"
+            readonly
+          />
+        </el-scrollbar>
       </el-descriptions-item>
       <el-descriptions-item label="原始 Token 数据" min-width="120">
-        <el-input
-          v-model="detailData.rawTokenInfo"
-          :autosize="{ maxRows: 20 }"
-          :readonly="true"
-          type="textarea"
-        />
+        <el-scrollbar style="max-height: 200px">
+          <el-input
+            v-model="detailData.rawTokenInfo"
+            type="textarea"
+            :autosize="{ minRows: 4 }"
+            readonly
+          />
+        </el-scrollbar>
       </el-descriptions-item>
       <el-descriptions-item label="原始 User 数据" min-width="120">
-        <el-input
-          v-model="detailData.rawUserInfo"
-          :autosize="{ maxRows: 20 }"
-          :readonly="true"
-          type="textarea"
-        />
+        <el-scrollbar style="max-height: 200px">
+          <el-input
+            v-model="detailData.rawUserInfo"
+            type="textarea"
+            :autosize="{ minRows: 4 }"
+            readonly
+          />
+        </el-scrollbar>
       </el-descriptions-item>
       <el-descriptions-item label="最后一次的认证 code" min-width="120">
         {{ detailData.code }}

@@ -36,6 +36,11 @@ export const FollowUpRecordApi = {
     return await request.post({ url: `/crm/follow-up-record/create`, data })
   },
 
+  // 新增跟进记录
+  getFollowUpRecord: async (params: any) => {
+    return await request.post({ url: `/crm/follow-up-record/get`, params })
+  },
+
   // 删除跟进记录
   deleteFollowUpRecord: async (id: number) => {
     return await request.delete({ url: `/crm/follow-up-record/delete?id=` + id })

@@ -51,9 +51,9 @@
 
       <!-- 操作按钮 -->
       <el-form-item>
-        <el-button 
-        @click="handleQuery"
-        v-hasPermi="['ow:assessment:topic:query']"
+        <el-button
+          @click="handleQuery"
+          v-hasPermi="['ow:assessment:topic:query']"
         >
           <Icon class="mr-5px" icon="ep:search" />
           搜索
@@ -62,26 +62,16 @@
           <Icon class="mr-5px" icon="ep:refresh" />
           重置
         </el-button>
-        <el-button 
-        plain 
-        type="primary" 
-        @click="openForm('create')"
-        v-hasPermi="['ow:assessment:topic:create']"
+        <el-button
+          plain
+          type="primary"
+          @click="openForm('create')"
+          v-hasPermi="['ow:assessment:topic:create']"
         >
           <Icon class="mr-5px" icon="ep:plus" />
           新增
         </el-button>
-        <el-button 
-        :loading="exportLoading" 
-        plain 
-        type="success" 
-        @click="handleExport"
-        v-hasPermi="['ow:assessment:topic:export']"
-        >
-          <Icon class="mr-5px" icon="ep:download" />
-          导出
-        </el-button>
-          <!-- 重置标签过滤按钮 -->
+        <!-- 重置标签过滤按钮 -->
         <el-button type="danger" @click="resetTagFilters">
           重置标签过滤
         </el-button>
@@ -101,24 +91,29 @@
         </template>
       </el-table-column>
 
-      <!-- irujia 新增标签列 -->
+      <!-- 修改后的标签列 -->
       <el-table-column align="center" label="标签">
         <template #header>
-          <el-dropdown @command="handleTagFilter" trigger="click">
+          <el-dropdown
+            @visible-change="handleDropdownVisibleChange"
+            trigger="click"
+          >
             <el-button type="primary" size="default">
               选择标签<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <template #dropdown>
-              <el-dropdown-menu>
-                <el-dropdown-item
-                  v-for="tag in allTags"
-                  :key="tag"
-                  :command="tag"
-                  :class="{ 'selected-tag': selectedTags.includes(tag) }" 
-                >
-                  {{ tag }}
-                </el-dropdown-item>
-              </el-dropdown-menu>
+              <div class="tag-dropdown">
+                <el-checkbox-group v-model="selectedTags" class="tag-grid">
+                  <el-checkbox
+                    v-for="tag in allTags"
+                    :key="tag"
+                    :label="tag"
+                    @change="filterByTags"
+                  >
+                    {{ tag }}
+                  </el-checkbox>
+                </el-checkbox-group>
+              </div>
             </template>
           </el-dropdown>
         </template>
@@ -146,45 +141,27 @@
       />
       <el-table-column align="center" label="操作">
         <template #default="scope">
-          <el-button 
-          link 
-          type="primary" 
-          @click="openForm('update', scope.row.id)"
-          v-hasPermi="['ow:assessment:topic:update']"
+          <el-button
+            link
+            type="primary"
+            @click="openForm('update', scope.row.id)"
+            v-hasPermi="['ow:assessment:topic:update']"
           >
             修改
           </el-button>
-          <router-link :to="'/ow/assessment/questions/' + scope.row.id">
-            <el-button 
-              link 
-              type="primary"
-              v-hasPermi="['ow:assessment:questions:list']"
-              >
-              问题
-            </el-button>
-          </router-link>
-          <router-link :to="'/ow/assessment/result/' + scope.row.id">
-            <el-button 
-              link 
-              type="primary"
-              v-hasPermi="['ow:assessment:result:list']"
-              >
-              结果
-            </el-button>
-          </router-link>
-          <el-button 
-          link 
-          type="danger"
-           @click="handleDelete(scope.row.id)"
-           v-hasPermi="['ow:assessment:topic:delete']"
-           >
+          <el-button
+            link
+            type="danger"
+            @click="handleDelete(scope.row.id)"
+            v-hasPermi="['ow:assessment:topic:delete']"
+          >
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <!-- 分页保持不变 -->
+    <!-- 分页 -->
     <Pagination
       v-model:limit="queryParams.pageSize"
       v-model:page="queryParams.pageNo"
@@ -193,26 +170,22 @@
     />
   </ContentWrap>
 
-
-
   <!-- 表单弹窗：添加/修改 -->
-  <TopicForm ref="formRef" @success="getList" />
+  <AssessmentForm ref="formRef" @success="getList" />
 </template>
-
 
 <script lang="ts" setup>
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
 import * as AssessmentApi from '@/api/ow/assessment/topic/index'
-import TopicForm from './TopicForm.vue'
-import download from '@/utils/download'
+import AssessmentForm from './AssessmentForm.vue'
 
 defineOptions({ name: 'AssessmentList' })
 
 interface AssessmentItem {
   id: number
   title: string
-  tags: { name: string }[]
+  tags: { id: number; name: string }[]
 }
 
 const message = useMessage() // 消息弹窗
@@ -230,10 +203,9 @@ const queryParams = reactive({
   createTime: [] // 创建时间范围
 })
 const queryFormRef = ref() // 搜索表单引用
-const exportLoading = ref(false) // 导出按钮加载状态
 
 // 标签相关
-const allTags = ref<string[]>([]) // 所有标签，用于下拉选择
+const allTags = ref<string[]>([]) // 所有标签，用于复选框
 const selectedTags = ref<string[]>([]) // 已选择的标签，用于过滤
 
 /** 获取列表数据 */
@@ -254,7 +226,7 @@ const getList = async () => {
     allTags.value = Array.from(tagSet) // 转换为数组
 
     // 初始化过滤后的数据
-    filteredData.value = list.value
+    filterByTags()
   } finally {
     loading.value = false
   }
@@ -288,29 +260,13 @@ const handleDelete = async (id: number) => {
   } catch (error) {}
 }
 
-/** 导出操作 */
-const handleExport = async () => {
-  try {
-    await message.exportConfirm()
-    exportLoading.value = true
-    const data = await AssessmentApi.exportAssessment(queryParams)
-    download.excel(data, '评估数据.xls')
-  } catch (error) {} finally {
-    exportLoading.value = false
-  }
-}
 
 /** 标签过滤逻辑 */
-const handleTagFilter = (tag) => {
-  // 如果标签已选中则移除，否则添加
-  if (selectedTags.value.includes(tag)) {
-    selectedTags.value = selectedTags.value.filter(t => t !== tag)
-  } else {
-    selectedTags.value.push(tag)
+const handleDropdownVisibleChange = (visible) => {
+  if (!visible) {
+    // 当下拉菜单关闭时，触发过滤
+    filterByTags()
   }
-
-  // 调用过滤函数进行筛选
-  filterByTags()
 }
 
 /** 根据已选择的标签对列表进行过滤 */
@@ -340,4 +296,17 @@ onMounted(() => {
 })
 </script>
 
-@/api/ow/assessment/topic/index
+<style scoped>
+.tag-dropdown {
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+/* 网格布局：每行显示 4 个 */
+.tag-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 一行四列 */
+  gap:10px; /* 间距 */
+}
+/* 可根据需要调整复选框样式 */
+</style>

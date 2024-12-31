@@ -87,7 +87,7 @@ const dateRange = ref([
   beginOfDay(new Date(new Date().getTime() - 3600 * 1000 * 24 * 7)),
   endOfDay(new Date(new Date().getTime() - 3600 * 1000 * 24))
 ])
-const accountId = ref(-1) // 选中的公众号编号
+const accountId = ref(null) // 选中的公众号编号
 const accountList = ref<MpAccountApi.AccountVO[]>([]) // 公众号账号列表
 
 const xAxisDate = ref([] as any[]) // X 轴的日期范围

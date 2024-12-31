@@ -65,7 +65,7 @@
                 v-for="item in getBusinessOptions"
                 :key="item.id"
                 :label="item.name"
-                :value="item.id!"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
@@ -114,7 +114,7 @@
                 v-for="item in userOptions"
                 :key="item.id"
                 :label="item.nickname"
-                :value="item.id!"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
@@ -159,7 +159,6 @@
             <el-input
               disabled
               v-model="formData.totalProductPrice"
-              :formatter="erpPriceTableColumnFormatter"
             />
           </el-form-item>
         </el-col>
@@ -180,8 +179,6 @@
             <el-input
               disabled
               v-model="formData.totalPrice"
-              placeholder="请输入商机金额"
-              :formatter="erpPriceTableColumnFormattere"
             />
           </el-form-item>
         </el-col>
@@ -193,13 +190,13 @@
     </template>
   </Dialog>
 </template>
+
 <script lang="ts" setup>
 import * as CustomerApi from '@/api/crm/customer'
 import * as ContractApi from '@/api/crm/contract'
 import * as UserApi from '@/api/system/user'
 import * as ContactApi from '@/api/crm/contact'
 import * as BusinessApi from '@/api/crm/business'
-import { erpPriceMultiply, erpPriceTableColumnFormatter } from '@/utils'
 import { useUserStore } from '@/store/modules/user'
 import ContractProductForm from '@/views/crm/contract/components/ContractProductForm.vue'
 
@@ -243,25 +240,31 @@ const contactList = ref<ContactApi.ContactVO[]>([])
 const subTabsName = ref('product')
 const productFormRef = ref()
 
-/** 计算 discountPrice、totalPrice 价格 */
+/** 计算产品总金额和折扣后金额 */
 watch(
-  () => formData.value,
-  (val) => {
-    if (!val) {
-      return
-    }
-    const totalProductPrice = val.products.reduce((prev, curr) => prev + curr.totalPrice, 0)
-    const discountPrice =
-      val.discountPercent != null
-        ? erpPriceMultiply(totalProductPrice, val.discountPercent / 100.0)
-        : 0
-    const totalPrice = totalProductPrice - discountPrice
-    // 赋值
-    formData.value.totalProductPrice = totalProductPrice
-    formData.value.totalPrice = totalPrice
+  () => formData.value.products,
+  (products) => {
+    // 计算产品总金额
+    const totalProductPrice = products.reduce((sum, product) => {
+      return sum + (product.totalPrice || 0)
+    }, 0);
+    formData.value.totalProductPrice = totalProductPrice;
+
+    // 计算折扣后的金额
+    const discountPrice = totalProductPrice * (formData.value.discountPercent / 100);
+    formData.value.totalPrice = totalProductPrice - discountPrice;
   },
   { deep: true }
-)
+);
+
+watch(
+  () => formData.value.discountPercent,
+  (discountPercent) => {
+    // 根据折扣计算折扣后的金额
+    const discountPrice = formData.value.totalProductPrice * (discountPercent / 100);
+    formData.value.totalPrice = formData.value.totalProductPrice - discountPrice;
+  }
+);
 
 /** 打开弹窗 */
 const open = async (type: string, id?: number) => {

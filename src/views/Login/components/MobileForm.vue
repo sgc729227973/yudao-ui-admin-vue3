@@ -96,8 +96,9 @@
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 
 import { useIcon } from '@/hooks/web/useIcon'
-
-import { setTenantId, setToken } from '@/utils/auth'
+import * as authUtil from '@/utils/auth'
+import { setToken } from '@/utils/auth'
+import * as LoginApi from '@/api/login'
 import { usePermissionStore } from '@/store/modules/permission'
 import { getTenantIdByName, sendSmsCode, smsLogin } from '@/api/login'
 import LoginFormTitle from './LoginFormTitle.vue'
@@ -178,9 +179,20 @@ watch(
 const getTenantId = async () => {
   if (loginData.tenantEnable === 'true') {
     const res = await getTenantIdByName(loginData.loginForm.tenantName)
-    setTenantId(res)
+    authUtil.setTenantId(res)
   }
 }
+
+// 根据域名，获得租户信息
+const getTenantByWebsite = async () => {
+  const website = location.host
+  const res = await LoginApi.getTenantByWebsite(website)
+  if (res) {
+    loginData.loginForm.tenantName = res.name
+    authUtil.setTenantId(res.id)
+  }
+}
+
 // 登录
 const signIn = async () => {
   await getTenantId()
@@ -211,6 +223,9 @@ const signIn = async () => {
       }, 400)
     })
 }
+onMounted(() => {
+  getTenantByWebsite()
+})
 </script>
 
 <style lang="scss" scoped>

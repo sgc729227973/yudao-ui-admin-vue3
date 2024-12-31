@@ -109,7 +109,7 @@
           <el-form-item label="回款金额" prop="price">
             <el-input-number
               v-model="formData.price"
-              :min="0.01"
+              :min="0.00"
               :precision="2"
               class="!w-100%"
               controls-position="right"

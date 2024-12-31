@@ -12,6 +12,8 @@ export interface OfficialWebsiteMenuVO {
   createTime?: Date;
   updateTime?: Date;
   deleted?: boolean;
+  visible?: boolean;
+  isQuickLink?: boolean;
   tenantId?: number;
 }
 

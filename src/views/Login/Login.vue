@@ -97,7 +97,7 @@ $prefix-cls: #{$namespace}-login;
       z-index: -1;
       width: 100%;
       height: 100%;
-      background-image: url('@/assets/svgs/login-bg.svg');
+      background-image: url('@/assets/svgs/login-box-bg.jpg');
       background-position: center;
       background-repeat: no-repeat;
       content: '';

@@ -1,22 +1,16 @@
 import request from '@/config/axios'
 
-// 定义 JobApplicationVO 接口，和序列化器中的字段保持一致
+// 定义 JobApplicationVO 接口
 export interface JobApplicationVO {
   id?: number
   postId: number
-  firstName: string
-  lastName: string
+  name: string
   email: string
   phone: string
   encryptedResume: string
   otherFiles?: string
-  question1: string
-  question2: string
-  question3: string
-  question4: string
-  question5: string
-  question6: string
-  createTime?: Date
+  questions: { [key: string]: string } // 问题字典
+  createTime?: number // 时间戳，使用 number 类型
 }
 
 // 查询岗位申请列表
@@ -31,5 +25,5 @@ export const getJobApplicationDetail = async (id: number) => {
 
 // 导出岗位申请数据
 export const exportJobApplication = (params: any) => {
-  return request.download({ url: '/ow/job/application/export', params })
+  return request.download({ url: '/ow/job/application/export', params }, true)
 }

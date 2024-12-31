@@ -129,6 +129,7 @@ export enum DICT_TYPE {
   SYSTEM_MAIL_SEND_STATUS = 'system_mail_send_status',
   SYSTEM_NOTIFY_TEMPLATE_TYPE = 'system_notify_template_type',
   SYSTEM_SOCIAL_TYPE = 'system_social_type',
+  SYSTEM_SDK_TYPE = 'system_sdk_type', // irujia
 
   // ========== INFRA 模块 ==========
   INFRA_BOOLEAN_STRING = 'infra_boolean_string',
@@ -246,4 +247,9 @@ export enum DICT_TYPE {
   OW_MEDIA_TYPE = 'ow_media_type',
   OW_TEAM_TYPE = 'ow_team_type',
   OW_DYNAMIC_PAGE_POSITION = 'ow_dynamic_page_position',
+  OW_GROUP_CATEGORY = 'ow_group_category',
+  OW_COMMUNITY_TYPE = 'ow_community_type',
+  OW_SUBMISSION_STATUS = 'ow_submission_status',
+  OW_PICTURE_GALLERY_CATEGORY = 'ow_picture_gallery_category',
+  OW_RELEASE_TYPE = 'ow_release_type'
 }

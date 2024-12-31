@@ -52,7 +52,18 @@
           />
         </el-select>
       </el-form-item>
-
+      <!-- 快速链接 -->
+        <el-form-item label="快速链接" prop="isQuickLink">
+          <el-select
+            v-model="queryParams.isQuickLink"
+            class="!w-240px"
+            clearable
+            placeholder="请选择是否快速链接"
+          >
+            <el-option :value="true" label="是" />
+            <el-option :value="false" label="否" />
+          </el-select>
+        </el-form-item>
       <!-- 状态 -->
       <el-form-item label="状态" prop="status">
         <el-select
@@ -110,6 +121,15 @@
       <el-table-column align="center" label="菜单编号" prop="id" />
       <el-table-column align="center" label="菜单名称" prop="name" show-overflow-tooltip />
       <el-table-column align="center" label="菜单路径" prop="path" show-overflow-tooltip />
+      <el-table-column align="center" label="快速链接" prop="isQuickLink">
+        <template #default="{ row }">
+          <el-tag
+            :type="row.isQuickLink ? 'success' : 'info'"
+          >
+            {{ row.isQuickLink ? '是' : '否' }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="状态" prop="status">
         <template #default="scope">
           <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
@@ -184,7 +204,9 @@ const queryParams = reactive({
   parent: undefined,  // 添加了父菜单ID作为过滤参数
   type: undefined,
   status: undefined,
-  createTime: []
+  createTime: [],
+  isQuickLink: undefined, // 快速链接过滤参数，初始为 undefined
+
 });
 const queryFormRef = ref();
 

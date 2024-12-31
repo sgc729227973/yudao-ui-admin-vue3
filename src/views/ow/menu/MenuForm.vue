@@ -1,69 +1,86 @@
 <template>
-  <Dialog v-model="dialogVisible" :title="dialogTitle">
+  <Dialog v-model="dialogVisible" :title="dialogTitle" width="800px">
     <el-form
       ref="formRef"
       v-loading="formLoading"
       :model="formData"
       :rules="formRules"
-      label-width="80px"
+      label-width="120px"
     >
-      <!-- 菜单名称 -->
-      <el-form-item label="菜单名称" prop="name">
-        <el-input v-model="formData.name" placeholder="请输入菜单名称" />
-      </el-form-item>
-
-      <!-- 菜单编码 -->
-      <el-form-item label="菜单编码" prop="code">
-        <el-input v-model="formData.code" placeholder="请输入菜单编码" />
-      </el-form-item>
-
-      <!-- 状态 -->
-      <el-form-item label="状态" prop="status">
-        <el-select v-model="formData.status" placeholder="请选择状态">
-          <el-option
-            v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
-            :key="dict.value"
-            :value="dict.value"
-            :label="dict.label"
-          />
-        </el-select>
-      </el-form-item>
-
-      <!-- 描述 -->
-      <el-form-item label="描述" prop="description">
-        <el-input v-model="formData.description" type="textarea" placeholder="请输入描述" />
-      </el-form-item>
-      <!-- 描述 -->
-      <el-form-item label="菜单路径" prop="path">
-        <el-input v-model="formData.path" type="textarea" placeholder="请输入菜单路径" />
-      </el-form-item>
-
-      <!-- 父菜单 -->
-      <el-form-item label="父菜单" prop="parent">
-        <el-select
-          v-model="formData.parent"
-          placeholder="请选择父菜单（默认顶级菜单）"
-          clearable
-        >
-          <el-option
-            v-for="menu in parentMenus"
-            :key="menu.id"
-            :label="menu.name"
-            :value="menu.id"
-          />
-        </el-select>
-      </el-form-item>
-
-      <!-- 排序 -->
-      <el-form-item label="排序" prop="sort">
-        <el-input-number v-model="formData.sort" placeholder="请输入排序值" />
-      </el-form-item>
-
-      <!-- 是否可见 -->
-      <el-form-item label="是否可见" prop="visible">
-        <el-switch v-model="formData.visible" />
-      </el-form-item>
-
+      <!-- 基础信息 -->
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="菜单名称" prop="name">
+              <el-input v-model="formData.name" placeholder="请输入菜单名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="菜单编码" prop="code">
+              <el-input v-model="formData.code" placeholder="请输入菜单编码" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="状态" prop="status">
+              <el-select v-model="formData.status" placeholder="请选择状态">
+                <el-option
+                  v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
+                  :key="dict.value"
+                  :value="dict.value"
+                  :label="dict.label"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="排序" prop="sort">
+              <el-input-number v-model="formData.sort" placeholder="请输入排序值" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="24">
+            <el-form-item label="描述" prop="description">
+              <el-input v-model="formData.description" type="textarea" placeholder="请输入描述" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="菜单路径" prop="path">
+              <el-input v-model="formData.path" placeholder="请输入菜单路径" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否可见" prop="visible">
+              <el-switch v-model="formData.visible" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="父菜单" prop="parent">
+              <el-select
+                v-model="formData.parent"
+                placeholder="请选择父菜单（默认顶级菜单）"
+                clearable
+              >
+                <el-option
+                  v-for="menu in parentMenus"
+                  :key="menu.id"
+                  :label="menu.name"
+                  :value="menu.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否为快捷菜单" prop="isQuickLink">
+              <el-switch v-model="formData.isQuickLink" />
+            </el-form-item>
+          </el-col>
+        </el-row>
     </el-form>
 
     <!-- 表单按钮 -->
@@ -76,7 +93,7 @@
 
 <script lang="ts" setup>
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict';
-import { createMenu, updateMenu, getMenuDetail, getSimpleMenuList, OfficialWebsiteMenuVO } from '@/api/ow/menu/index'; // 引入 getSimpleMenuList
+import { createMenu, updateMenu, getMenuDetail, getSimpleMenuList, OfficialWebsiteMenuVO } from '@/api/ow/menu/index';
 import { ref, reactive, defineEmits, defineExpose, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -88,11 +105,11 @@ const dialogTitle = ref('');
 const formLoading = ref(false);
 const formType = ref('');
 
-interface parentMenus {
+interface ParentMenus {
   id: number;
   name: string;
 }
-const parentMenus = ref<parentMenus[]>([]);
+const parentMenus = ref<ParentMenus[]>([]);
 
 interface MenuFormData {
   id?: number;
@@ -103,7 +120,8 @@ interface MenuFormData {
   description?: string;
   parent?: number;
   sort?: number;
-  visible?: boolean; // 新增是否可见
+  visible?: boolean; // 是否可见
+  isQuickLink?: boolean; // 是否为快捷菜单
 }
 
 const formData = ref<MenuFormData>({
@@ -116,6 +134,7 @@ const formData = ref<MenuFormData>({
   parent: undefined, // 父级菜单 ID
   sort: undefined,
   visible: true, // 默认可见
+  isQuickLink: false,
 });
 
 const formRules = reactive({
@@ -142,7 +161,6 @@ const open = async (type: string, id?: number) => {
     try {
       const menu = await getMenuDetail(id);
       formData.value = { ...menu };
-      console.log('菜单详情:', formData.value);
     } catch (error) {
       console.error('获取菜单详情失败:', error);
     } finally {
@@ -189,7 +207,8 @@ const resetForm = () => {
     description: '',
     parent: undefined,
     sort: undefined,
-    visible: true, // 重置为默认可见
+    visible: true,
+    isQuickLink: false,
   };
   formRef.value?.resetFields();
 };

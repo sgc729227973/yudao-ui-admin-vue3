@@ -49,7 +49,7 @@ const audioProps = reactive({
   currentTime: '00:00',
   duration: '00:00',
   muted:  false,
-  volume: 50,
+  volume: 0,
 })
 
 function toggleStatus (type: string) {

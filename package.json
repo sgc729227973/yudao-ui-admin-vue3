@@ -74,7 +74,8 @@
     "vue-types": "^5.1.1",
     "vuedraggable": "^4.1.0",
     "web-storage-cache": "^1.1.1",
-    "xml-js": "^1.6.11"
+    "xml-js": "^1.6.11",
+    "jsoneditor": "^10.1.2" 
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.1",

@@ -235,6 +235,28 @@ const remainingRouter: AppRouteRecordRaw[] = [
     }
   },
   {
+    path: '/service',
+    component: Layout,
+    name: 'service',
+    meta: {      
+      hidden: true
+    },
+    children: [
+      {
+        path: 'assessment/form/edit',
+        component: () => import('@/views/service/assessment/form/editor/index.vue'),
+        name: 'AssessmentFormEditor',
+        meta: {
+          noCache: true,
+          hidden: true,
+          canTo: true,
+          title: '评估流程表单',
+          activeMenu: '/server/assessment/assessment-form'
+        }
+      }
+    ]
+  },
+  {
     path: '/bpm',
     component: Layout,
     name: 'bpm',

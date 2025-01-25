@@ -28,7 +28,7 @@
           <Icon class="mr-5px" icon="ep:refresh" />
           重置
         </el-button>
-        <el-button v-hasPermi="['bpm:form:create']" plain type="primary" @click="openForm">
+        <el-button v-hasPermi="['bpm:form:create']" plain type="primary"  @click="() => openForm()">
           <Icon class="mr-5px" icon="ep:plus" />
           新增
         </el-button>
@@ -182,7 +182,7 @@ const openDetail = async (rowId: number) => {
 watch(
   () => currentRoute.value,
   () => {
-    getList()
+    // getList()
   },
   {
     immediate: true
